@@ -292,6 +292,9 @@ summary:focus-visible,
 .wrap.wide { max-width: 1160px; }
 main:focus { outline: none; }
 
+/* keep anchored targets clear of the sticky header */
+:target, [id] { scroll-margin-top: 96px; }
+
 /* ---- Page header ---- */
 .page-head { margin: .5rem 0 2.2rem; }
 .eyebrow {
@@ -346,33 +349,38 @@ a:visited { color: var(--text); }
 .xref:hover { filter: contrast(1.15); }
 .xref:visited { color: var(--card-text); }
 
-/* ================= Lotus book (home hero) ================= */
-.lotus-intro { text-align: center; max-width: 60ch; margin: 0 auto 1rem; }
-.lotus-stage {
-  --R: clamp(128px, 30vw, 210px);
-  position: relative;
-  width: 100%;
-  min-height: calc(var(--R) * 2 + 190px);
-  display: grid;
-  place-items: center;
-  margin: 1rem auto 2rem;
-}
+/* ================= Lotus fold book (home hero) ================= */
+/* A concentric, blooming lotus. The whole flower lives inside an 820px
+   coordinate box that is scaled to fit any viewport, so radii and petal
+   sizes never need media queries. Centre = 410,410. */
+.lotus-intro { text-align: center; max-width: 66ch; margin: 0 auto 1.2rem; }
 
-.lotus {
+.lotus-stage { position: relative; width: 100%; margin: 1rem auto 1.5rem; }
+/* --U is the flower's diameter; every radius, size and font scales from it,
+   so the whole lotus stays proportional with no media queries. */
+.lotus-fit {
+  --U: min(820px, 94vw);
   position: relative;
-  width: calc(var(--R) * 2 + 160px);
-  height: calc(var(--R) * 2 + 160px);
-  max-width: 96vw;
+  width: var(--U);
+  aspect-ratio: 1 / 1;
   margin: 0 auto;
 }
+.lotus { position: absolute; inset: 0; }
+
+/* ring wrappers only carry the radius (--R) + petal size (--S) tokens */
+.ring { display: contents; }
+.ring0 { --R: calc(.122 * var(--U)); --S: calc(.092 * var(--U)); }
+.ring1 { --R: calc(.224 * var(--U)); --S: calc(.135 * var(--U)); }
+.ring2 { --R: calc(.334 * var(--U)); --S: calc(.116 * var(--U)); }
+.ring3 { --R: calc(.437 * var(--U)); --S: calc(.096 * var(--U)); }
 
 /* central cover / book */
 .lotus-center {
   position: absolute;
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(150px, 34vw, 210px);
-  height: clamp(150px, 34vw, 210px);
+  width: calc(.192 * var(--U));
+  height: calc(.192 * var(--U));
   border-radius: 50%;
   background: var(--card);
   color: var(--card-text);
@@ -380,56 +388,49 @@ a:visited { color: var(--text); }
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 1rem;
-  z-index: 20;
+  padding: calc(.012 * var(--U));
+  z-index: 60;
   box-shadow: var(--shadow);
   cursor: pointer;
+  font: inherit;
 }
-.lotus-center .lc-course { font-size: .82rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 800; }
-.lotus-center .lc-title { font-family: var(--font-serif); font-size: clamp(1.15rem, 3vw, 1.55rem); line-height: 1.1; margin: .35rem 0; }
-.lotus-center .lc-hint { font-size: .8rem; color: var(--card-soft); }
+.lotus-center .lc-course { font-size: calc(.0145 * var(--U)); letter-spacing: .14em; text-transform: uppercase; font-weight: 800; }
+.lotus-center .lc-title { font-family: var(--font-serif); font-size: calc(.026 * var(--U)); line-height: 1.05; margin: calc(.006 * var(--U)) 0; }
+.lotus-center .lc-hint { font-size: calc(.0135 * var(--U)); color: var(--card-soft); }
 .lotus-center:hover { filter: contrast(1.08); }
 
 /* petals */
 .petal {
   position: absolute;
   left: 50%; top: 50%;
-  width: clamp(118px, 27vw, 150px);
-  min-height: clamp(118px, 27vw, 150px);
-  padding: 1rem .85rem;
+  width: var(--S); height: var(--S);
+  padding: calc(.008 * var(--U));
+  font-size: calc(.0188 * var(--U));
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: .35rem;
+  gap: .1em;
   text-align: center;
   text-decoration: none;
   background: var(--card);
   color: var(--card-text);
   border: 2px solid var(--line);
-  /* petal / teardrop silhouette */
-  border-radius: 62% 62% 62% 62% / 78% 78% 46% 46%;
+  border-radius: 64% 64% 64% 64% / 80% 80% 46% 46%;
   box-shadow: var(--shadow-sm);
-  transform: translate(-50%, -50%) scale(.12);
+  transform: translate(-50%, -50%) scale(.05);
   opacity: 0;
   pointer-events: none;
-  transition: transform .6s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
+  transition: transform .7s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
   z-index: 10;
 }
 .petal:visited { color: var(--card-text); }
-.petal .p-num {
-  align-self: center;
-  width: 2rem; height: 2rem;
-  display: grid; place-items: center;
-  background: var(--card-chip-bg);
-  color: var(--card-chip-text);
-  border-radius: 50%;
-  font-family: var(--font-serif);
-  font-weight: 800;
-  font-size: 1rem;
-}
-.petal .p-title { font-weight: 700; font-size: .98rem; line-height: 1.2; }
+.petal .p-num { font-family: var(--font-serif); font-weight: 800; font-size: 1.5em; line-height: 1; }
+.petal .p-title { font-weight: 700; font-size: .82em; line-height: 1.08; }
+.ring1 .petal .p-title { font-size: .92em; }
+.ring3 .petal .p-title { font-size: .72em; text-transform: uppercase; letter-spacing: .04em; color: var(--card-soft); }
 
-/* bloomed state */
+/* bloomed state — position each petal at radius --R along its unit vector */
 .lotus-stage[data-lotus="open"] .petal {
   opacity: 1;
   pointer-events: auto;
@@ -440,26 +441,25 @@ a:visited { color: var(--text); }
 }
 .lotus-stage[data-lotus="open"] .petal:hover {
   box-shadow: var(--shadow);
+  z-index: 55;
   transform: translate(
       calc(-50% + (var(--R) * var(--cx))),
       calc(-50% + (var(--R) * var(--cy)))
-    ) scale(1.06);
+    ) scale(1.12);
 }
-/* stagger the bloom */
-.petal:nth-child(1){transition-delay:.02s}.petal:nth-child(2){transition-delay:.06s}
-.petal:nth-child(3){transition-delay:.10s}.petal:nth-child(4){transition-delay:.14s}
-.petal:nth-child(5){transition-delay:.18s}.petal:nth-child(6){transition-delay:.22s}
-.petal:nth-child(7){transition-delay:.26s}.petal:nth-child(8){transition-delay:.30s}
-.petal:nth-child(9){transition-delay:.34s}
+/* staged bloom: inner rings open first, then outward like a lotus */
+.ring0 .petal { transition-delay: .05s; }
+.ring1 .petal { transition-delay: .30s; }
+.ring2 .petal { transition-delay: .55s; }
+.ring3 .petal { transition-delay: .82s; }
 
-.lotus-toggle { display: inline-flex; gap: .5rem; align-items: center; }
-.lotus-note { text-align: center; color: var(--text-soft); font-size: .95rem; margin-top: .5rem; }
-
-/* Fallback: if the viewport is very small, drop the radius so petals nest closer */
-@media (max-width: 520px) {
-  .lotus-stage { --R: 118px; }
-  .petal { width: 116px; min-height: 116px; }
+.lotus-note { text-align: center; margin-top: .4rem; }
+.lotus-legend {
+  display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; justify-content: center;
+  margin: .2rem auto 0; color: var(--text-soft); font-size: .95rem; max-width: 60ch;
 }
+.lotus-legend span { display: inline-flex; align-items: center; gap: .4rem; }
+.lotus-legend b { color: var(--text); }
 
 /* Big call-to-action button */
 .btn {
