@@ -67,7 +67,40 @@
     }
 
     setupReader();
+    setupLotus();
   });
+
+  /* ---------------- Lotus book (home page) ---------------- */
+  function setupLotus() {
+    var stage = document.getElementById("lotus-stage");
+    if (!stage) return;
+    var center = document.getElementById("lotus-center");
+    var toggle = document.getElementById("lotus-toggle");
+    var hint = document.getElementById("lotus-hint");
+
+    function setState(open) {
+      stage.setAttribute("data-lotus", open ? "open" : "closed");
+      if (center) center.setAttribute("aria-expanded", String(open));
+      if (toggle) toggle.innerHTML = open ? "&#10047; Fold the book" : "&#10047; Open the book";
+      if (hint) hint.textContent = open ? "Tap to fold" : "Tap to open";
+    }
+    function isOpen() { return stage.getAttribute("data-lotus") !== "closed"; }
+    function flip() { setState(!isOpen()); }
+
+    if (center) center.addEventListener("click", flip);
+    if (toggle) toggle.addEventListener("click", flip);
+
+    // Animate an opening on load (unless the visitor prefers reduced motion).
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce) {
+      setState(false);
+      window.requestAnimationFrame(function () {
+        setTimeout(function () { setState(true); }, 450);
+      });
+    } else {
+      setState(true);
+    }
+  }
 
   /* ---------------- Read aloud (text-to-speech) ---------------- */
   var synth = window.speechSynthesis;
