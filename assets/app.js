@@ -69,7 +69,61 @@
     setupReader();
     setupLotus();
     setupDrill();
+    setupConcepts();
   });
+
+  /* ---------------- Pond concepts (home page) ----------------
+     Each leaf around the flower reveals a short prelude of the theories and
+     authors behind that concept.                                            */
+  function setupConcepts() {
+    var pads = document.querySelectorAll(".pad[data-concept]");
+    if (!pads.length) return;
+    var hint = document.getElementById("prelude-hint");
+
+    function anyOpen() { return document.querySelector(".prelude-panel:not([hidden])"); }
+
+    function closeAll(exceptId) {
+      document.querySelectorAll(".prelude-panel").forEach(function (p) {
+        if (p.id !== exceptId) p.hidden = true;
+      });
+      pads.forEach(function (b) {
+        if (b.getAttribute("data-concept") !== exceptId) b.setAttribute("aria-expanded", "false");
+      });
+    }
+
+    pads.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var id = b.getAttribute("data-concept");
+        var panel = document.getElementById(id);
+        if (!panel) return;
+        var opening = panel.hidden;
+        closeAll(opening ? id : null);
+        panel.hidden = !opening;
+        b.setAttribute("aria-expanded", String(opening));
+        if (hint) hint.style.display = opening ? "none" : "";
+        if (opening) {
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          var h = panel.querySelector("h3");
+          if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
+        }
+      });
+    });
+
+    document.querySelectorAll(".prelude-close").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = btn.getAttribute("data-close");
+        var panel = document.getElementById(id);
+        if (panel) panel.hidden = true;
+        var b = document.querySelector('.pad[data-concept="' + id + '"]');
+        if (b) { b.setAttribute("aria-expanded", "false"); b.focus(); }
+        if (hint && !anyOpen()) hint.style.display = "";
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && anyOpen()) { closeAll(null); if (hint) hint.style.display = ""; }
+    });
+  }
 
   /* ---------------- Petal drill-down (sections 4, 5, 9) ---------------- */
   function setupDrill() {

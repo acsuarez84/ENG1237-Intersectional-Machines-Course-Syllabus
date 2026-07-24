@@ -557,16 +557,142 @@ a:visited { color: var(--text); }
   transform: rotateZ(var(--ang)) scale(1);
 }
 
-/* caption naming the embodied metaphor (also read aloud) */
+/* ======= Sunset pond scene (home hero) ======= */
+.home-flower {
+  position: relative;
+  display: grid;
+  place-items: center;
+  gap: 1.4rem;
+  padding: 2.4rem 1.5rem 2.8rem;
+  border-radius: 28px;
+  overflow: hidden;
+  isolation: isolate;
+  /* dusk sky glowing down into a green pond */
+  background:
+    radial-gradient(58% 42% at 50% 15%, rgba(255,231,178,.98), rgba(255,190,150,.55) 45%, transparent 72%),
+    linear-gradient(180deg,
+      #eda158 0%, #efb586 18%, #eab7b1 37%, #d6c2a4 52%,
+      #96b47f 66%, #5a8a63 80%, #2f5a44 100%);
+  color: #16261d;
+}
+/* soft light streaks on the water */
+.home-flower::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 42%;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 16px, rgba(255,255,255,.05) 16px 17px);
+  pointer-events: none; z-index: 0;
+}
+.home-flower .lotus-stage { margin: 0 auto; position: relative; z-index: 1; }
+/* leave room inside the scene for the ring of concept leaves */
+.home-flower .lotus-fit { --U: min(820px, calc(100vw - 10rem), calc(100vh - 19rem)); }
+
+/* the lily pad the whole flower rests on */
+.lily-pad {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: calc(1.02 * var(--U));
+  height: calc(1.02 * var(--U));
+  transform: translate(-50%, -50%) rotate(9deg);
+  z-index: 1;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,.3));
+  pointer-events: none;
+}
+
+/* ======= Concept leaves (clickable) ======= */
+.pads { position: absolute; inset: 0; z-index: 30; }
+.pad {
+  position: absolute;
+  left: 50%; top: 50%;
+  --rad: calc(.55 * var(--U));
+  height: var(--rad); width: calc(.26 * var(--U));
+  margin-left: calc(.13 * var(--U) * -1);
+  margin-top: calc(var(--rad) * -1);
+  transform-origin: 50% 100%;
+  transform: rotateZ(var(--ang));
+  display: flex; align-items: flex-start; justify-content: center;
+  background: none; border: 0; padding: 0; cursor: pointer; font: inherit;
+}
+.pad-inner {
+  transform: rotateZ(calc(-1 * var(--ang)));
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: calc(.0155 * var(--U));
+  letter-spacing: .01em;
+  text-transform: lowercase;
+  color: #123320;
+  background: linear-gradient(150deg, #c4e6a1, #7cc074 55%, #4e9a58);
+  border: 1.5px solid #3d7f48;
+  border-radius: 999px 999px 999px 6px;   /* leaf-ish */
+  padding: calc(.007 * var(--U)) calc(.016 * var(--U));
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,.28);
+  transition: filter .15s ease, transform .15s ease;
+}
+.pad:hover .pad-inner { filter: brightness(1.06); }
+.pad:focus-visible { outline: none; }
+.pad:focus-visible .pad-inner { outline: 3px solid #fff; outline-offset: 2px; }
+.pad[aria-expanded="true"] .pad-inner {
+  background: linear-gradient(150deg, #e9f6d6, #b9dfa0 60%, #86bd76);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.85), 0 3px 8px rgba(0,0,0,.3);
+}
+
+/* ======= Prelude panels (theories & authors) ======= */
+.prelude-stack {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 64ch; margin: 0 auto;
+}
+.prelude-hint {
+  text-align: center; margin: 0 auto;
+  max-width: 52ch;
+  color: #17301f;
+  background: rgba(255,252,245,.72);
+  border-radius: 999px;
+  padding: .5rem .9rem;
+  font-size: .96rem; font-weight: 600;
+}
+.prelude-panel {
+  background: rgba(255,252,247,.94);
+  color: #1f2f28;
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 16px;
+  padding: 1rem 1.15rem 1.1rem;
+  margin: .7rem 0 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,.22);
+}
+.prelude-panel[hidden] { display: none; }
+.prelude-panel .pp-head { display: flex; align-items: center; gap: .8rem; }
+.prelude-panel h3 {
+  margin: 0; font-size: 1.15rem; text-transform: capitalize;
+  color: #143a22; letter-spacing: 0;
+}
+.prelude-close {
+  margin-left: auto; flex: none;
+  width: 1.9rem; height: 1.9rem; line-height: 1;
+  border-radius: 50%; cursor: pointer;
+  background: transparent; color: #143a22;
+  border: 2px solid #143a22; font: inherit; font-size: 1.15rem; font-weight: 800;
+}
+.prelude-close:hover { background: #143a22; color: #fff; }
+.prelude-panel .take { margin: .5rem 0 .4rem; font-weight: 700; }
+.prelude-panel .fits { margin: 0; font-size: .96rem; color: #2c3d34; }
+.prelude-panel .fits-h { font-weight: 800; color: #143a22; }
+
+/* caption naming the metaphor (also read aloud) */
 .lotus-caption {
-  max-width: 60ch;
-  margin: 1.2rem auto 0;
+  position: relative; z-index: 1;
+  max-width: 62ch;
+  margin: .2rem auto 0;
   text-align: center;
-  color: var(--text-soft);
+  color: #17301f;
+  background: rgba(255,252,245,.72);
+  border-radius: 16px;
+  padding: .7rem 1rem;
   font-size: 1rem;
   line-height: 1.5;
 }
-.lotus-caption strong { color: var(--text); }
+.lotus-caption strong { color: #0f2415; }
 
 /* ---- Drill-down panels (petals 4/5/9) ---- */
 .drill-panel {
