@@ -414,39 +414,47 @@ a:visited { color: var(--text); }
   margin-top: calc(var(--ph) * -1);
   transform-origin: 50% 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start;      /* label rides the outer bulb, clear of centre */
   justify-content: center;
-  padding-top: calc(.055 * var(--U));
+  padding: calc(.055 * var(--U)) calc(.03 * var(--U)) 0;
   font-size: calc(.0185 * var(--U));
   text-align: center;
   text-decoration: none;
-  background: var(--card);
-  color: var(--card-text);
-  border: 2px solid var(--line);
+  background: var(--pc, var(--card));
+  color: #23161f;               /* dark ink reads on every pastel + both themes */
+  border: 2px solid rgba(20,10,16,.20);
   /* teardrop: wide rounded tip, tapering to the base at the centre */
   border-radius: 50% 50% 50% 50% / 40% 40% 62% 62%;
   box-shadow: var(--shadow-sm);
-  /* closed bud: petals shrunk into the centre */
-  transform: rotateZ(var(--ang)) scale(.12);
+  /* closed bud: petals collapsed into the centre (a clenched fist) */
+  transform: rotateZ(var(--ang)) scale(.05);
   opacity: 0;
   pointer-events: none;
   z-index: var(--z);
-  transition: transform .8s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
+  transition: transform .85s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
 }
-.petal:visited { color: var(--card-text); }
-/* label counter-rotated so it stays upright at the petal tip */
+.petal:visited { color: #23161f; }
+/* label counter-rotated so it stays upright, and width-capped so long
+   titles wrap *inside* the petal instead of spilling past its edges */
 .petal .p-inner {
-  display: flex; flex-direction: column; align-items: center; gap: .22em;
+  display: flex; flex-direction: column; align-items: center; gap: .3em;
+  max-width: 84%;
   transform: rotateZ(calc(-1 * var(--ang)));
 }
 .petal .p-num {
-  font-family: var(--font-serif); font-weight: 800; font-size: 1.25em; line-height: 1;
+  font-family: var(--font-serif); font-weight: 800; font-size: 1.2em; line-height: 1;
   width: 1.7em; height: 1.7em; display: grid; place-items: center;
-  border-radius: 50%; background: var(--card-chip-bg); color: var(--card-chip-text);
+  border-radius: 50%; background: rgba(255,255,255,.92); color: #23161f;
+  box-shadow: 0 1px 2px rgba(0,0,0,.18);
 }
-.petal .p-title { font-weight: 800; font-size: .95em; line-height: 1.13; }
+.petal .p-title {
+  font-weight: 800; font-size: .92em; line-height: 1.16;
+  overflow-wrap: break-word; hyphens: auto;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45);
+}
 
-/* bloomed state — the flower is open; petals radiate to full size */
+/* bloomed state — the flower opens; petals grow out from the centre to
+   full size, like fingers unclenching from a fist */
 .lotus-stage[data-open] .petal {
   opacity: 1;
   pointer-events: auto;
@@ -462,6 +470,39 @@ a:visited { color: var(--text); }
 .petal:nth-of-type(4) { transition-delay: .15s; }
 .petal:nth-of-type(5) { transition-delay: .20s; }
 .petal:nth-of-type(6) { transition-delay: .25s; }
+
+/* ---- decorative leaves (behind the petals, never covering titles) ---- */
+.leaves { position: absolute; inset: 0; }
+.leaf {
+  position: absolute;
+  left: 50%; top: 50%;
+  --lw: calc(.105 * var(--U));
+  --lh: calc(.5 * var(--U));
+  width: var(--lw); height: var(--lh);
+  margin-left: calc(var(--lw) / -2);
+  margin-top: calc(var(--lh) * -1);
+  transform-origin: 50% 100%;
+  background: linear-gradient(150deg, #a6d98d 0%, #63a866 55%, #4c8f55 100%);
+  border: 2px solid #3f8a4c;
+  border-radius: 50% 50% 50% 50% / 66% 66% 40% 40%;
+  z-index: 3;                    /* below every petal (petals are z 14-22) */
+  opacity: 0;
+  pointer-events: none;
+  transform: rotateZ(var(--ang)) scale(.05);
+  transition: transform .95s cubic-bezier(.22,1,.36,1), opacity .55s ease;
+  box-shadow: var(--shadow-sm);
+}
+.leaf::after {                   /* central vein */
+  content: ""; position: absolute;
+  left: 50%; top: 14%; bottom: 10%; width: 2px;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,.5);
+  border-radius: 2px;
+}
+.lotus-stage[data-open] .leaf {
+  opacity: 1;
+  transform: rotateZ(var(--ang)) scale(1);
+}
 
 /* ---- Drill-down panels (petals 4/5/9) ---- */
 .drill-panel {
