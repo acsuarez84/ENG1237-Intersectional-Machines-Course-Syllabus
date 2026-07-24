@@ -359,30 +359,29 @@ a:visited { color: var(--text); }
 /* --U is the flower's diameter; every radius, size and font scales from it,
    so the whole lotus stays proportional with no media queries. */
 .lotus-fit {
-  --U: min(820px, 94vw);
+  --U: min(900px, 94vw);
   position: relative;
   width: var(--U);
   aspect-ratio: 1 / 1;
   margin: 0 auto;
+  overflow: hidden;
 }
 .lotus { position: absolute; inset: 0; perspective: 900px; transform-style: preserve-3d; }
 
-/* Each ring carries petal length (--ph), width (--pw), the open tilt
-   (--bloom) and a stacking order. Petals are anchored by their base at
-   the flower centre and stand up as a bud until their layer unfurls. */
+/* Each ring sits at radius --R with petals of size --pw x --ph. Rings are
+   spaced far enough apart, and hold few enough petals, that nothing
+   overlaps and every section title stays readable. */
 .ring { display: contents; }
-.ring0 { --ph: calc(.25 * var(--U)); --pw: calc(.125 * var(--U)); --bloom: 16deg; --z: 24; }
-.ring1 { --ph: calc(.33 * var(--U)); --pw: calc(.115 * var(--U)); --bloom: 20deg; --z: 18; }
-.ring2 { --ph: calc(.42 * var(--U)); --pw: calc(.10 * var(--U));  --bloom: 33deg; --z: 14; }
-.ring3 { --ph: calc(.50 * var(--U)); --pw: calc(.072 * var(--U)); --bloom: 45deg; --z: 10; }
+.ring0 { --R: calc(.21 * var(--U)); --pw: calc(.168 * var(--U)); --ph: calc(.13 * var(--U)); --z: 20; }
+.ring1 { --R: calc(.36 * var(--U)); --pw: calc(.168 * var(--U)); --ph: calc(.13 * var(--U)); --z: 16; }
 
 /* central seed pod (the heart of the flower) */
 .lotus-center {
   position: absolute;
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: calc(.205 * var(--U));
-  height: calc(.205 * var(--U));
+  width: calc(.138 * var(--U));
+  height: calc(.138 * var(--U));
   border-radius: 50%;
   background: var(--card);
   color: var(--card-text);
@@ -390,83 +389,75 @@ a:visited { color: var(--text); }
   display: grid;
   place-items: center;
   text-align: center;
-  padding: calc(.014 * var(--U));
+  padding: calc(.008 * var(--U));
   z-index: 60;
   box-shadow: var(--shadow);
   cursor: pointer;
   font: inherit;
 }
-.lotus-center .lc-course { font-size: calc(.0135 * var(--U)); letter-spacing: .12em; text-transform: uppercase; font-weight: 800; }
-.lotus-center .lc-title { font-family: var(--font-serif); font-size: calc(.0225 * var(--U)); line-height: 1.02; margin: calc(.005 * var(--U)) 0; }
-.lotus-center .lc-hint { font-size: calc(.0125 * var(--U)); color: var(--card-soft); }
+.lotus-center .lc-course { font-size: calc(.0112 * var(--U)); letter-spacing: .08em; text-transform: uppercase; font-weight: 800; }
+.lotus-center .lc-title { font-family: var(--font-serif); font-size: calc(.017 * var(--U)); line-height: 1.0; margin: calc(.004 * var(--U)) 0; }
+.lotus-center .lc-hint { font-size: calc(.0105 * var(--U)); color: var(--card-soft); }
 .lotus-center:hover { filter: contrast(1.08); }
 
-/* petals — each anchored by its base at the flower centre. A petal points
-   "up" (its length) and is rotated around the centre by --ang. When closed
-   it stands upright (rotateX high) like a lotus bud; when its layer opens
-   it tips outward to --bloom and unfurls. */
+/* petals — upright, readable cards positioned on their ring. Folded to the
+   centre until their layer opens, then they settle at radius --R. */
 .petal {
   position: absolute;
   left: 50%; top: 50%;
-  width: var(--pw); height: var(--ph);
+  width: var(--pw); min-height: var(--ph);
   margin-left: calc(var(--pw) / -2);
-  margin-top: calc(var(--ph) * -1);
-  transform-origin: 50% 100%;
-  transform-style: preserve-3d;
+  margin-top: calc(var(--ph) / -2);
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding-top: calc(.022 * var(--U));
-  font-size: calc(.0182 * var(--U));
+  gap: .15em;
+  padding: calc(.011 * var(--U));
+  font-size: calc(.0152 * var(--U));
   text-align: center;
   text-decoration: none;
   background: var(--card);
   color: var(--card-text);
   border: 2px solid var(--line);
-  /* petal silhouette: rounded outer tip, tapering to the base at centre */
-  border-radius: 50% 50% 50% 50% / 66% 66% 34% 34%;
+  border-radius: 46% 46% 46% 46% / 58% 58% 42% 42%;
   box-shadow: var(--shadow-sm);
-  backface-visibility: hidden;
-  /* closed bud: gathered upright, tips leaning in over the pod */
-  transform: rotateZ(var(--ang)) rotateX(66deg) scale(.8);
-  opacity: 1;
+  transform: translate(-50%, -50%) scale(.18);
+  opacity: 0;
   pointer-events: none;
   z-index: var(--z);
-  transition: transform .9s cubic-bezier(.22,1,.36,1), opacity .6s ease, box-shadow .2s ease;
+  transition: transform .7s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
 }
 .petal:visited { color: var(--card-text); }
-/* label kept upright + facing the viewer by inverting the petal's rotation */
-.petal .p-inner {
-  display: flex; flex-direction: column; align-items: center; gap: .1em;
-  transform: rotateX(calc(-1 * var(--bloom))) rotateZ(calc(-1 * var(--ang)));
-  transition: opacity .5s ease;
-  opacity: 0;
+.petal .p-inner { display: flex; flex-direction: column; align-items: center; gap: .2em; }
+.petal .p-num {
+  font-family: var(--font-serif); font-weight: 800; font-size: 1.05em; line-height: 1;
+  width: 1.7em; height: 1.7em; display: grid; place-items: center;
+  border-radius: 50%; background: var(--card-chip-bg); color: var(--card-chip-text);
 }
-.petal .p-num { font-family: var(--font-serif); font-weight: 800; font-size: 1.5em; line-height: 1; }
-.petal .p-title { font-weight: 700; font-size: .8em; line-height: 1.08; }
-.ring1 .petal .p-title { font-size: .9em; }
-.ring3 .petal .p-title { font-size: .7em; text-transform: uppercase; letter-spacing: .03em; color: var(--card-soft); }
+.petal .p-title { font-weight: 700; font-size: 1em; line-height: 1.12; }
 
-/* bloomed state — the ring's layer is open; petals unfurl outward */
+/* bloomed state — the ring's layer is open; petals settle on their ring */
 .ring.open .petal {
   opacity: 1;
   pointer-events: auto;
-  transform: rotateZ(var(--ang)) rotateX(var(--bloom)) scale(1);
+  transform: translate(
+      calc(-50% + (var(--R) * var(--cx))),
+      calc(-50% + (var(--R) * var(--cy)))
+    ) scale(1);
 }
-.ring.open .petal .p-inner { opacity: 1; }
 .ring.open .petal:hover {
   box-shadow: var(--shadow);
   z-index: 50;
-  transform: rotateZ(var(--ang)) rotateX(calc(var(--bloom) - 6deg)) scale(1.05);
+  transform: translate(
+      calc(-50% + (var(--R) * var(--cx))),
+      calc(-50% + (var(--R) * var(--cy)))
+    ) scale(1.06);
 }
 /* stagger petals within a ring so the layer unfurls petal by petal */
-.petal:nth-of-type(2) { transition-delay: .05s; }
-.petal:nth-of-type(3) { transition-delay: .10s; }
-.petal:nth-of-type(4) { transition-delay: .15s; }
-.petal:nth-of-type(5) { transition-delay: .20s; }
-.petal:nth-of-type(6) { transition-delay: .25s; }
-.petal:nth-of-type(7) { transition-delay: .30s; }
-.petal:nth-of-type(n+8) { transition-delay: .35s; }
+.petal:nth-of-type(2) { transition-delay: .06s; }
+.petal:nth-of-type(3) { transition-delay: .12s; }
+.petal:nth-of-type(4) { transition-delay: .18s; }
 
 /* ---- unfold controls + layer stepper ---- */
 .lotus-note { text-align: center; margin-top: .4rem; display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }

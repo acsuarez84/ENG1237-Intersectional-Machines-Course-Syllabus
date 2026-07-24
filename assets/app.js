@@ -79,7 +79,7 @@
        4 = + class-by-class schedule
      Each ring wrapper gets the class "open" once the current level
      reaches it, so its petals unfold outward.                       */
-  var MAX_LEVEL = 4;
+  var MAX_LEVEL = 2;
   function setupLotus() {
     var stage = document.getElementById("lotus-stage");
     if (!stage) return;
@@ -91,11 +91,9 @@
     var steps = Array.prototype.slice.call(document.querySelectorAll(".lotus-step"));
     var rings = [
       document.querySelector(".ring0"),
-      document.querySelector(".ring1"),
-      document.querySelector(".ring2"),
-      document.querySelector(".ring3")
+      document.querySelector(".ring1")
     ];
-    var labels = ["Closed", "Centre", "Core readings", "Supplemental readings", "Class schedule"];
+    var labels = ["Closed", "Course intro (Sections 1–2 & units)", "Sections 3–9"];
     var level = 0;
 
     function render() {
