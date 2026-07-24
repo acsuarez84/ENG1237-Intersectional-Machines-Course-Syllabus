@@ -68,7 +68,57 @@
 
     setupReader();
     setupLotus();
+    setupDrill();
   });
+
+  /* ---------------- Petal drill-down (sections 4, 5, 9) ---------------- */
+  function setupDrill() {
+    var petals = document.querySelectorAll(".petal[data-drill]");
+    if (!petals.length) return;
+
+    function closeAll(except) {
+      document.querySelectorAll(".drill-panel").forEach(function (pnl) {
+        if (pnl === except) return;
+        pnl.hidden = true;
+      });
+      document.querySelectorAll(".petal[data-drill]").forEach(function (pt) {
+        if (except && pt.getAttribute("data-drill") === except.id.replace("drill-", "")) return;
+        pt.setAttribute("aria-expanded", "false");
+      });
+    }
+
+    petals.forEach(function (pt) {
+      pt.addEventListener("click", function (e) {
+        var id = "drill-" + pt.getAttribute("data-drill");
+        var panel = document.getElementById(id);
+        if (!panel) return;                 // no panel -> let the link work
+        e.preventDefault();
+        var opening = panel.hidden;
+        closeAll(opening ? panel : null);
+        panel.hidden = !opening;
+        pt.setAttribute("aria-expanded", String(opening));
+        if (opening) {
+          panel.scrollIntoView({ behavior: "smooth", block: "start" });
+          var h = panel.querySelector("h3");
+          if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
+        }
+      });
+    });
+
+    document.querySelectorAll(".drill-close").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = btn.getAttribute("data-close");
+        var panel = document.getElementById("drill-" + id);
+        if (panel) panel.hidden = true;
+        var pt = document.querySelector('.petal[data-drill="' + id + '"]');
+        if (pt) { pt.setAttribute("aria-expanded", "false"); pt.focus(); }
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeAll(null);
+    });
+  }
 
   /* ---------------- Lotus fold book (home page) ----------------
      The book unfolds in levels, like a paper lotus fold book:
