@@ -81,12 +81,13 @@
     <div class="page-head"><h1>ENG1237: Intersectional Machines</h1><p class="lede">A feminist and intersectional approach to artificial intelligence &mdash; read, write, and make your way through a critical study of the machines that shape identity.</p></div>
 
     <p class="lotus-intro">This home page is itself a small act of <strong>critical making</strong>:
-    the whole syllabus is a <em>lotus fold book</em>. Open the book and it blooms outward in
-    layers &mdash; the <strong>centre</strong> holds your contact, the course purpose, and the units;
-    the next ring is the <strong>core readings</strong>; then the <strong>supplemental readings</strong>;
-    and the outer ring is the <strong>class-by-class schedule</strong>. Select any petal to turn to it.</p>
+    the whole syllabus is a <em>lotus fold book</em>. Open it and it unfolds one layer at a time &mdash;
+    the <strong>centre</strong> holds your contact, the course purpose, and the units; then the
+    <strong>core readings</strong> unfold; then the <strong>supplemental readings</strong>; and
+    finally the <strong>class-by-class schedule</strong>. Use the buttons or the numbered layers
+    below to unfold and fold the book, and select any petal to turn to it.</p>
 
-    <div class="lotus-stage" data-lotus="open" id="lotus-stage">
+    <div class="lotus-stage" data-level="0" id="lotus-stage">
       <div class="lotus-fit">
         <div class="lotus">
     <div class="ring ring0" role="list">
@@ -128,23 +129,25 @@
       <a class="petal" role="listitem" href="section9.html#week-16" style="--cx:-0.1951;--cy:-0.9808" aria-label="Class schedule, Week 16"><span class="p-num">16</span><span class="p-title">Week</span></a>
     </div>
           <button type="button" class="lotus-center" id="lotus-center"
-                  aria-expanded="true" aria-controls="lotus-stage">
+                  aria-expanded="false" aria-controls="lotus-stage">
             <span class="lc-course">ENG1237</span>
             <span class="lc-title">Intersectional Machines</span>
-            <span class="lc-hint" id="lotus-hint">Tap to fold</span>
+            <span class="lc-hint" id="lotus-hint">Tap to open</span>
           </button>
         </div>
       </div>
     </div>
+    <p class="lotus-status" id="lotus-status" aria-live="polite">Layer 0 of 4 &mdash; Closed</p>
     <p class="lotus-note">
-      <button type="button" class="btn" id="lotus-toggle">&#10047; Fold the book</button>
+      <button type="button" class="btn" id="lotus-prev" disabled>&#8249; Fold back</button>
+      <button type="button" class="btn" id="lotus-next">&#10047; Open the book</button>
     </p>
-    <p class="lotus-legend">
-      <span><b>Centre</b> &middot; contact, purpose &amp; units</span>
-      <span><b>Ring 1</b> &middot; core readings</span>
-      <span><b>Ring 2</b> &middot; supplemental readings</span>
-      <span><b>Ring 3</b> &middot; class-by-class schedule</span>
-    </p>
+    <ol class="lotus-legend" aria-label="Unfold a layer">
+      <li class="lotus-step" data-level="1" role="button" tabindex="0"><span class="dot">1</span> Centre &middot; contact, purpose &amp; units</li>
+      <li class="lotus-step" data-level="2" role="button" tabindex="0"><span class="dot">2</span> Core readings</li>
+      <li class="lotus-step" data-level="3" role="button" tabindex="0"><span class="dot">3</span> Supplemental readings</li>
+      <li class="lotus-step" data-level="4" role="button" tabindex="0"><span class="dot">4</span> Class-by-class schedule</li>
+    </ol>
 
     <div class="callout">
       <p><strong>Welcome.</strong> This is the interactive home for our course syllabus.

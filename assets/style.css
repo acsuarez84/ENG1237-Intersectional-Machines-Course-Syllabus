@@ -365,7 +365,7 @@ a:visited { color: var(--text); }
   aspect-ratio: 1 / 1;
   margin: 0 auto;
 }
-.lotus { position: absolute; inset: 0; }
+.lotus { position: absolute; inset: 0; perspective: 1400px; }
 
 /* ring wrappers only carry the radius (--R) + petal size (--S) tokens */
 .ring { display: contents; }
@@ -374,14 +374,14 @@ a:visited { color: var(--text); }
 .ring2 { --R: calc(.334 * var(--U)); --S: calc(.116 * var(--U)); }
 .ring3 { --R: calc(.437 * var(--U)); --S: calc(.096 * var(--U)); }
 
-/* central cover / book */
+/* central cover / folded book */
 .lotus-center {
   position: absolute;
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: calc(.192 * var(--U));
-  height: calc(.192 * var(--U));
-  border-radius: 50%;
+  width: calc(.2 * var(--U));
+  height: calc(.2 * var(--U));
+  border-radius: 22% / 22%;
   background: var(--card);
   color: var(--card-text);
   border: 3px solid var(--line);
@@ -394,12 +394,22 @@ a:visited { color: var(--text); }
   cursor: pointer;
   font: inherit;
 }
+/* folded-paper seams on the cover */
+.lotus-center::before,
+.lotus-center::after {
+  content: "";
+  position: absolute;
+  background: color-mix(in srgb, var(--card-text) 16%, transparent);
+  pointer-events: none;
+}
+.lotus-center::before { left: 50%; top: 8%; bottom: 8%; width: 1px; transform: translateX(-50%); }
+.lotus-center::after  { top: 50%; left: 8%; right: 8%; height: 1px; transform: translateY(-50%); }
 .lotus-center .lc-course { font-size: calc(.0145 * var(--U)); letter-spacing: .14em; text-transform: uppercase; font-weight: 800; }
 .lotus-center .lc-title { font-family: var(--font-serif); font-size: calc(.026 * var(--U)); line-height: 1.05; margin: calc(.006 * var(--U)) 0; }
 .lotus-center .lc-hint { font-size: calc(.0135 * var(--U)); color: var(--card-soft); }
 .lotus-center:hover { filter: contrast(1.08); }
 
-/* petals */
+/* petals — folded flat toward the centre until their layer unfolds */
 .petal {
   position: absolute;
   left: 50%; top: 50%;
@@ -418,10 +428,12 @@ a:visited { color: var(--text); }
   border: 2px solid var(--line);
   border-radius: 64% 64% 64% 64% / 80% 80% 46% 46%;
   box-shadow: var(--shadow-sm);
-  transform: translate(-50%, -50%) scale(.05);
+  transform-style: preserve-3d;
+  /* folded: collapsed at the centre and tipped back like a closed flap */
+  transform: translate(-50%, -50%) scale(.06) rotateX(-78deg);
   opacity: 0;
   pointer-events: none;
-  transition: transform .7s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
+  transition: transform .8s cubic-bezier(.22,1,.36,1), opacity .55s ease, box-shadow .2s ease;
   z-index: 10;
 }
 .petal:visited { color: var(--card-text); }
@@ -430,16 +442,16 @@ a:visited { color: var(--text); }
 .ring1 .petal .p-title { font-size: .92em; }
 .ring3 .petal .p-title { font-size: .72em; text-transform: uppercase; letter-spacing: .04em; color: var(--card-soft); }
 
-/* bloomed state — position each petal at radius --R along its unit vector */
-.lotus-stage[data-lotus="open"] .petal {
+/* unfolded state — the ring's layer is open; petals settle at radius --R */
+.ring.open .petal {
   opacity: 1;
   pointer-events: auto;
   transform: translate(
       calc(-50% + (var(--R) * var(--cx))),
       calc(-50% + (var(--R) * var(--cy)))
-    );
+    ) rotateX(0deg);
 }
-.lotus-stage[data-lotus="open"] .petal:hover {
+.ring.open .petal:hover {
   box-shadow: var(--shadow);
   z-index: 55;
   transform: translate(
@@ -447,19 +459,39 @@ a:visited { color: var(--text); }
       calc(-50% + (var(--R) * var(--cy)))
     ) scale(1.12);
 }
-/* staged bloom: inner rings open first, then outward like a lotus */
-.ring0 .petal { transition-delay: .05s; }
-.ring1 .petal { transition-delay: .30s; }
-.ring2 .petal { transition-delay: .55s; }
-.ring3 .petal { transition-delay: .82s; }
+/* stagger petals within a ring so the layer unfurls petal by petal */
+.petal:nth-of-type(2) { transition-delay: .05s; }
+.petal:nth-of-type(3) { transition-delay: .10s; }
+.petal:nth-of-type(4) { transition-delay: .15s; }
+.petal:nth-of-type(5) { transition-delay: .20s; }
+.petal:nth-of-type(6) { transition-delay: .25s; }
+.petal:nth-of-type(7) { transition-delay: .30s; }
+.petal:nth-of-type(n+8) { transition-delay: .35s; }
 
-.lotus-note { text-align: center; margin-top: .4rem; }
+/* ---- unfold controls + layer stepper ---- */
+.lotus-note { text-align: center; margin-top: .4rem; display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
+.lotus-status { text-align: center; color: var(--text-soft); font-size: .95rem; margin: .5rem 0 .2rem; }
+.btn[disabled] { opacity: .4; cursor: default; filter: none; }
+
 .lotus-legend {
-  display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; justify-content: center;
-  margin: .2rem auto 0; color: var(--text-soft); font-size: .95rem; max-width: 60ch;
+  list-style: none; padding: 0;
+  display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
+  margin: .5rem auto 0; max-width: 70ch;
 }
-.lotus-legend span { display: inline-flex; align-items: center; gap: .4rem; }
-.lotus-legend b { color: var(--text); }
+.lotus-step {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border: 2px solid var(--line); border-radius: 999px;
+  padding: .3rem .8rem; cursor: pointer;
+  background: var(--bg); color: var(--text); font: inherit; font-size: .95rem;
+}
+.lotus-step .dot {
+  width: 1.5rem; height: 1.5rem; flex: none; border-radius: 50%;
+  display: inline-grid; place-items: center; font-weight: 800; font-size: .85rem;
+  background: var(--bg); color: var(--text); border: 2px solid var(--line);
+}
+.lotus-step.reached { background: var(--card); color: var(--card-text); border-color: var(--line); }
+.lotus-step.reached .dot { background: var(--card-chip-bg); color: var(--card-chip-text); border-color: transparent; }
+.lotus-step[aria-current="step"] { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 /* Big call-to-action button */
 .btn {

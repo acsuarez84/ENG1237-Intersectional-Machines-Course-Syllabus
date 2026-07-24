@@ -70,35 +70,86 @@
     setupLotus();
   });
 
-  /* ---------------- Lotus book (home page) ---------------- */
+  /* ---------------- Lotus fold book (home page) ----------------
+     The book unfolds in levels, like a paper lotus fold book:
+       0 = closed (only the cover)
+       1 = centre  (contact, course purpose, units)
+       2 = + core readings
+       3 = + supplemental readings
+       4 = + class-by-class schedule
+     Each ring wrapper gets the class "open" once the current level
+     reaches it, so its petals unfold outward.                       */
+  var MAX_LEVEL = 4;
   function setupLotus() {
     var stage = document.getElementById("lotus-stage");
     if (!stage) return;
     var center = document.getElementById("lotus-center");
-    var toggle = document.getElementById("lotus-toggle");
+    var nextBtn = document.getElementById("lotus-next");
+    var prevBtn = document.getElementById("lotus-prev");
     var hint = document.getElementById("lotus-hint");
+    var status = document.getElementById("lotus-status");
+    var steps = Array.prototype.slice.call(document.querySelectorAll(".lotus-step"));
+    var rings = [
+      document.querySelector(".ring0"),
+      document.querySelector(".ring1"),
+      document.querySelector(".ring2"),
+      document.querySelector(".ring3")
+    ];
+    var labels = ["Closed", "Centre", "Core readings", "Supplemental readings", "Class schedule"];
+    var level = 0;
 
-    function setState(open) {
-      stage.setAttribute("data-lotus", open ? "open" : "closed");
-      if (center) center.setAttribute("aria-expanded", String(open));
-      if (toggle) toggle.innerHTML = open ? "&#10047; Fold the book" : "&#10047; Open the book";
-      if (hint) hint.textContent = open ? "Tap to fold" : "Tap to open";
-    }
-    function isOpen() { return stage.getAttribute("data-lotus") !== "closed"; }
-    function flip() { setState(!isOpen()); }
-
-    if (center) center.addEventListener("click", flip);
-    if (toggle) toggle.addEventListener("click", flip);
-
-    // Animate an opening on load (unless the visitor prefers reduced motion).
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduce) {
-      setState(false);
-      window.requestAnimationFrame(function () {
-        setTimeout(function () { setState(true); }, 450);
+    function render() {
+      stage.setAttribute("data-level", String(level));
+      for (var i = 0; i < rings.length; i++) {
+        if (rings[i]) rings[i].classList.toggle("open", level > i);
+      }
+      if (center) center.setAttribute("aria-expanded", String(level > 0));
+      if (hint) hint.textContent = level === 0 ? "Tap to open" :
+                 (level === MAX_LEVEL ? "Tap to fold" : "Tap to unfold more");
+      if (status) status.textContent = "Layer " + level + " of " + MAX_LEVEL + " — " + labels[level];
+      if (prevBtn) prevBtn.disabled = level === 0;
+      if (nextBtn) {
+        nextBtn.disabled = level === MAX_LEVEL;
+        nextBtn.innerHTML = level === 0 ? "&#10047; Open the book"
+                                        : "Unfold next layer &#8250;";
+      }
+      steps.forEach(function (s) {
+        var n = parseInt(s.getAttribute("data-level"), 10);
+        s.classList.toggle("reached", n <= level);
+        s.setAttribute("aria-current", n === level ? "step" : "false");
       });
+    }
+    function setLevel(n) {
+      level = Math.max(0, Math.min(MAX_LEVEL, n));
+      render();
+    }
+
+    if (nextBtn) nextBtn.addEventListener("click", function () { setLevel(level + 1); });
+    if (prevBtn) prevBtn.addEventListener("click", function () { setLevel(level - 1); });
+    // Centre cover: advance a layer, or fold shut once fully open.
+    if (center) center.addEventListener("click", function () {
+      setLevel(level >= MAX_LEVEL ? 0 : level + 1);
+    });
+    // Legend entries jump straight to a layer.
+    steps.forEach(function (s) {
+      function jump() { setLevel(parseInt(s.getAttribute("data-level"), 10)); }
+      s.addEventListener("click", jump);
+      s.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); jump(); }
+      });
+    });
+
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setLevel(MAX_LEVEL);           // show everything, no animation
     } else {
-      setState(true);
+      setLevel(0);
+      // Unfold the book layer by layer on load so visitors see it open.
+      var step = 1;
+      var timer = setInterval(function () {
+        setLevel(step++);
+        if (step > MAX_LEVEL) clearInterval(timer);
+      }, 620);
     }
   }
 
