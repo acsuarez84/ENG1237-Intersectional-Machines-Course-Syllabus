@@ -378,9 +378,9 @@ a:visited { color: var(--text); }
 .ring { display: contents; }
 .ring0 { --ph: calc(.32 * var(--U)); --pw: calc(.225 * var(--U)); --z: 22; }
 .ring1 { --ph: calc(.47 * var(--U)); --pw: calc(.205 * var(--U)); --z: 14; }
-/* Section 10 back-petal: same reach as the outer ring but seated *behind* it
-   (z below .ring1) so it peeks out from the notch between sections 9 and 4. */
-.ring-back { --ph: calc(.5 * var(--U)); --pw: calc(.2 * var(--U)); --z: 10; }
+/* Section 10 petal: identical in size to the outer ring, seated just behind
+   it (z below .ring1) so it sits cleanly in the notch between sections 9 and 4. */
+.ring-back { --ph: calc(.47 * var(--U)); --pw: calc(.205 * var(--U)); --z: 13; }
 
 /* central seed pod (the heart of the flower / the closed bud's cover) */
 .lotus-center {
