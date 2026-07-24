@@ -812,6 +812,75 @@ thead th { background: var(--card-chip-bg); color: var(--card-chip-text); font-s
 tbody tr:hover { background: color-mix(in srgb, var(--card-text) 8%, transparent); }
 tr.subtotal { font-weight: 800; background: color-mix(in srgb, var(--card-text) 10%, transparent); }
 
+/* ---- Class-by-class schedule chart (Section 9) ---- */
+.sched-legend {
+  list-style: none; padding: 0; margin: 1rem 0 .4rem;
+  display: flex; flex-wrap: wrap; gap: .4rem 1.1rem;
+  font-size: .92rem; color: var(--text-soft); font-weight: 600;
+}
+.sched-legend li { display: inline-flex; align-items: center; gap: .45rem; }
+.sched-legend .sw { width: 1.05rem; height: 1.05rem; border-radius: 4px; border: 1px solid rgba(0,0,0,.25); }
+.sw.red { background: #EE0000; } .sw.grey { background: #D9D9D9; }
+.sw.green { background: #D9F2D0; } .sw.blue { background: #DAE9F7; }
+
+table.schedule {
+  table-layout: fixed;
+  min-width: 940px;
+  border-collapse: collapse;
+  font-size: .86rem;
+}
+table.schedule col { }
+table.schedule th, table.schedule td {
+  border: 1px solid var(--card-line);   /* every cell is its own container */
+  padding: .6rem .7rem;
+  vertical-align: top;
+  line-height: 1.4;
+}
+table.schedule thead th {
+  text-transform: none; letter-spacing: 0;
+  background: var(--card-chip-bg); color: var(--card-chip-text);
+  position: sticky; top: 0; z-index: 2;
+}
+table.schedule .wk-col { width: 4.2rem; text-align: center; }
+table.schedule thead th.wk-col { font-size: .82rem; }
+table.schedule col.c-day { width: 24%; }
+.schedule .col-t { display: block; font-size: 1rem; font-weight: 800; }
+.schedule .col-s { display: block; font-size: .78rem; font-weight: 500; opacity: .85; margin-top: .15rem; text-transform: none; letter-spacing: 0; }
+.schedule tbody tr:hover { background: transparent; }
+.schedule .wk-badge {
+  display: inline-grid; place-items: center;
+  width: 2rem; height: 2rem; margin: .1rem auto;
+  background: var(--card-chip-bg); color: var(--card-chip-text);
+  border-radius: 8px; font-family: var(--font-serif); font-weight: 800; font-size: 1.05rem;
+}
+.schedule .dh { margin: 0 0 .35rem; font-weight: 800; color: var(--card-text); }
+.schedule .rd {
+  margin: 0 0 .45rem; font-family: var(--font-serif);
+  font-weight: 700; color: var(--card-text);
+}
+.schedule .nr { margin: .5rem 0 0; font-size: .82rem; color: var(--card-soft); }
+.schedule td > p { margin: 0 0 .4rem; }
+.schedule td > p:last-child { margin-bottom: 0; }
+.schedule ul.fq { margin: .2rem 0 0; padding-left: 1.05rem; }
+.schedule ul.fq li { margin: .25rem 0; }
+.schedule .clean.sm { margin: .2rem 0 .3rem; padding-left: 1.1rem; }
+.schedule .clean.sm li { margin: .18rem 0; }
+.schedule ol.clean.sm { list-style: decimal; }
+.schedule ul.clean.sm { list-style: disc; }
+
+/* the instructor's cell colours — fixed in both themes */
+.schedule td.red  { background: #EE0000; color: #fff; }
+.schedule td.red .dh, .schedule td.red strong { color: #fff; }
+.schedule td.grey  { background: #D9D9D9; }
+.schedule td.green { background: #D9F2D0; }
+.schedule td.blue  { background: #DAE9F7; }
+.schedule td.grey, .schedule td.grey .dh, .schedule td.grey strong,
+.schedule td.green, .schedule td.green .dh, .schedule td.green strong,
+.schedule td.blue, .schedule td.blue .dh, .schedule td.blue strong { color: #18120f; }
+.schedule td.blue .due, .schedule td.green .due, .schedule td.grey .due {
+  color: #18120f; border-color: #18120f;
+}
+
 /* ---- Schedule (weeks) ---- */
 .week {
   border: 2px solid var(--line);
