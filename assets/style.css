@@ -292,6 +292,9 @@ summary:focus-visible,
 .wrap.wide { max-width: 1160px; }
 main:focus { outline: none; }
 
+/* keep anchored targets clear of the sticky header */
+:target, [id] { scroll-margin-top: 96px; }
+
 /* ---- Page header ---- */
 .page-head { margin: .5rem 0 2.2rem; }
 .eyebrow {
@@ -346,33 +349,39 @@ a:visited { color: var(--text); }
 .xref:hover { filter: contrast(1.15); }
 .xref:visited { color: var(--card-text); }
 
-/* ================= Lotus book (home hero) ================= */
-.lotus-intro { text-align: center; max-width: 60ch; margin: 0 auto 1rem; }
-.lotus-stage {
-  --R: clamp(128px, 30vw, 210px);
-  position: relative;
-  width: 100%;
-  min-height: calc(var(--R) * 2 + 190px);
-  display: grid;
-  place-items: center;
-  margin: 1rem auto 2rem;
-}
+/* ================= Lotus fold book (home hero) ================= */
+/* A concentric, blooming lotus. The whole flower lives inside an 820px
+   coordinate box that is scaled to fit any viewport, so radii and petal
+   sizes never need media queries. Centre = 410,410. */
+.lotus-intro { text-align: center; max-width: 66ch; margin: 0 auto 1.2rem; }
 
-.lotus {
+.lotus-stage { position: relative; width: 100%; margin: 1rem auto 1.5rem; }
+/* --U is the flower's diameter; every radius, size and font scales from it,
+   so the whole lotus stays proportional with no media queries. */
+.lotus-fit {
+  --U: min(900px, 94vw);
   position: relative;
-  width: calc(var(--R) * 2 + 160px);
-  height: calc(var(--R) * 2 + 160px);
-  max-width: 96vw;
+  width: var(--U);
+  aspect-ratio: 1 / 1;
   margin: 0 auto;
+  overflow: hidden;
 }
+.lotus { position: absolute; inset: 0; perspective: 900px; transform-style: preserve-3d; }
 
-/* central cover / book */
+/* Each ring sits at radius --R with petals of size --pw x --ph. Rings are
+   spaced far enough apart, and hold few enough petals, that nothing
+   overlaps and every section title stays readable. */
+.ring { display: contents; }
+.ring0 { --R: calc(.20 * var(--U));  --pw: calc(.17 * var(--U)); --ph: calc(.138 * var(--U)); --z: 20; }
+.ring1 { --R: calc(.335 * var(--U)); --pw: calc(.17 * var(--U)); --ph: calc(.138 * var(--U)); --z: 16; }
+
+/* central seed pod (the heart of the flower) */
 .lotus-center {
   position: absolute;
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(150px, 34vw, 210px);
-  height: clamp(150px, 34vw, 210px);
+  width: calc(.125 * var(--U));
+  height: calc(.125 * var(--U));
   border-radius: 50%;
   background: var(--card);
   color: var(--card-text);
@@ -380,86 +389,100 @@ a:visited { color: var(--text); }
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 1rem;
-  z-index: 20;
+  padding: calc(.008 * var(--U));
+  z-index: 60;
   box-shadow: var(--shadow);
   cursor: pointer;
+  font: inherit;
 }
-.lotus-center .lc-course { font-size: .82rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 800; }
-.lotus-center .lc-title { font-family: var(--font-serif); font-size: clamp(1.15rem, 3vw, 1.55rem); line-height: 1.1; margin: .35rem 0; }
-.lotus-center .lc-hint { font-size: .8rem; color: var(--card-soft); }
+.lotus-center .lc-course { font-size: calc(.0105 * var(--U)); letter-spacing: .06em; text-transform: uppercase; font-weight: 800; }
+.lotus-center .lc-title { font-family: var(--font-serif); font-size: calc(.0155 * var(--U)); line-height: 1.0; margin: calc(.0035 * var(--U)) 0; }
+.lotus-center .lc-hint { font-size: calc(.0098 * var(--U)); color: var(--card-soft); }
 .lotus-center:hover { filter: contrast(1.08); }
 
-/* petals */
+/* petals — upright, readable cards positioned on their ring. Folded to the
+   centre until their layer opens, then they settle at radius --R. */
 .petal {
   position: absolute;
   left: 50%; top: 50%;
-  width: clamp(118px, 27vw, 150px);
-  min-height: clamp(118px, 27vw, 150px);
-  padding: 1rem .85rem;
+  width: var(--pw); min-height: var(--ph);
+  margin-left: calc(var(--pw) / -2);
+  margin-top: calc(var(--ph) / -2);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: .35rem;
+  gap: .15em;
+  padding: calc(.011 * var(--U));
+  font-size: calc(.0178 * var(--U));
   text-align: center;
   text-decoration: none;
   background: var(--card);
   color: var(--card-text);
   border: 2px solid var(--line);
-  /* petal / teardrop silhouette */
-  border-radius: 62% 62% 62% 62% / 78% 78% 46% 46%;
+  border-radius: 46% 46% 46% 46% / 58% 58% 42% 42%;
   box-shadow: var(--shadow-sm);
-  transform: translate(-50%, -50%) scale(.12);
+  transform: translate(-50%, -50%) scale(.18);
   opacity: 0;
   pointer-events: none;
-  transition: transform .6s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
-  z-index: 10;
+  z-index: var(--z);
+  transition: transform .7s cubic-bezier(.22,1,.36,1), opacity .5s ease, box-shadow .2s ease;
 }
 .petal:visited { color: var(--card-text); }
+.petal .p-inner { display: flex; flex-direction: column; align-items: center; gap: .2em; }
 .petal .p-num {
-  align-self: center;
-  width: 2rem; height: 2rem;
-  display: grid; place-items: center;
-  background: var(--card-chip-bg);
-  color: var(--card-chip-text);
-  border-radius: 50%;
-  font-family: var(--font-serif);
-  font-weight: 800;
-  font-size: 1rem;
+  font-family: var(--font-serif); font-weight: 800; font-size: 1.05em; line-height: 1;
+  width: 1.7em; height: 1.7em; display: grid; place-items: center;
+  border-radius: 50%; background: var(--card-chip-bg); color: var(--card-chip-text);
 }
-.petal .p-title { font-weight: 700; font-size: .98rem; line-height: 1.2; }
+.petal .p-title { font-weight: 800; font-size: 1em; line-height: 1.14; letter-spacing: .005em; }
 
-/* bloomed state */
-.lotus-stage[data-lotus="open"] .petal {
+/* bloomed state — the ring's layer is open; petals settle on their ring */
+.ring.open .petal {
   opacity: 1;
   pointer-events: auto;
   transform: translate(
       calc(-50% + (var(--R) * var(--cx))),
       calc(-50% + (var(--R) * var(--cy)))
-    );
+    ) scale(1);
 }
-.lotus-stage[data-lotus="open"] .petal:hover {
+.ring.open .petal:hover {
   box-shadow: var(--shadow);
+  z-index: 50;
   transform: translate(
       calc(-50% + (var(--R) * var(--cx))),
       calc(-50% + (var(--R) * var(--cy)))
     ) scale(1.06);
 }
-/* stagger the bloom */
-.petal:nth-child(1){transition-delay:.02s}.petal:nth-child(2){transition-delay:.06s}
-.petal:nth-child(3){transition-delay:.10s}.petal:nth-child(4){transition-delay:.14s}
-.petal:nth-child(5){transition-delay:.18s}.petal:nth-child(6){transition-delay:.22s}
-.petal:nth-child(7){transition-delay:.26s}.petal:nth-child(8){transition-delay:.30s}
-.petal:nth-child(9){transition-delay:.34s}
+/* stagger petals within a ring so the layer unfurls petal by petal */
+.petal:nth-of-type(2) { transition-delay: .06s; }
+.petal:nth-of-type(3) { transition-delay: .12s; }
+.petal:nth-of-type(4) { transition-delay: .18s; }
 
-.lotus-toggle { display: inline-flex; gap: .5rem; align-items: center; }
-.lotus-note { text-align: center; color: var(--text-soft); font-size: .95rem; margin-top: .5rem; }
+/* ---- unfold controls + layer stepper ---- */
+.lotus-note { text-align: center; margin-top: .4rem; display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
+.lotus-status { text-align: center; color: var(--text-soft); font-size: .95rem; margin: .5rem 0 .2rem; }
+.btn[disabled] { opacity: .4; cursor: default; filter: none; }
 
-/* Fallback: if the viewport is very small, drop the radius so petals nest closer */
-@media (max-width: 520px) {
-  .lotus-stage { --R: 118px; }
-  .petal { width: 116px; min-height: 116px; }
+.lotus-legend {
+  list-style: none; padding: 0;
+  display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
+  margin: .5rem auto 0; max-width: 70ch;
 }
+.lotus-step {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border: 2px solid var(--line); border-radius: 999px;
+  padding: .3rem .8rem; cursor: pointer;
+  background: var(--bg); color: var(--text); font: inherit; font-size: .95rem;
+}
+.lotus-step .dot {
+  width: 1.5rem; height: 1.5rem; flex: none; border-radius: 50%;
+  display: inline-grid; place-items: center; font-weight: 800; font-size: .85rem;
+  background: var(--bg); color: var(--text); border: 2px solid var(--line);
+}
+.lotus-step.reached { background: var(--card); color: var(--card-text); border-color: var(--line); }
+.lotus-step.reached .dot { background: var(--card-chip-bg); color: var(--card-chip-text); border-color: transparent; }
+.lotus-step[aria-current="step"] { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 /* Big call-to-action button */
 .btn {
