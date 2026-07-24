@@ -868,6 +868,30 @@ table.schedule col.c-day { width: 24%; }
 .schedule ol.clean.sm { list-style: decimal; }
 .schedule ul.clean.sm { list-style: disc; }
 
+/* "Examples to look at" boxes — the instructor's own demo projects */
+.schedule .examples {
+  margin: .55rem 0 .2rem;
+  padding: .5rem .6rem .55rem;
+  border: 1px dashed var(--card-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--card-text) 6%, transparent);
+}
+.schedule .examples .ex-h {
+  margin: 0 0 .3rem; font-weight: 800; font-size: .82rem;
+  text-transform: uppercase; letter-spacing: .04em; color: var(--card-soft);
+}
+.schedule .examples ul.clean.sm { margin: 0; padding-left: 1.05rem; }
+.schedule .examples a { font-weight: 700; color: var(--card-text); text-decoration: underline; }
+.schedule .examples a:visited { color: var(--card-text); }
+/* keep the boxes readable inside coloured cells */
+.schedule td.grey .examples, .schedule td.green .examples, .schedule td.blue .examples {
+  border-color: rgba(0,0,0,.28); background: rgba(255,255,255,.45);
+}
+.schedule td.grey .examples a, .schedule td.green .examples a, .schedule td.blue .examples a,
+.schedule td.grey .examples .ex-h, .schedule td.green .examples .ex-h, .schedule td.blue .examples .ex-h {
+  color: #18120f;
+}
+
 /* the instructor's cell colours — fixed in both themes */
 .schedule td.red  { background: #EE0000; color: #fff; }
 .schedule td.red .dh, .schedule td.red strong { color: #fff; }
