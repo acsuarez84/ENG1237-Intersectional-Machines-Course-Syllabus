@@ -372,16 +372,16 @@ a:visited { color: var(--text); }
    spaced far enough apart, and hold few enough petals, that nothing
    overlaps and every section title stays readable. */
 .ring { display: contents; }
-.ring0 { --R: calc(.21 * var(--U)); --pw: calc(.168 * var(--U)); --ph: calc(.13 * var(--U)); --z: 20; }
-.ring1 { --R: calc(.36 * var(--U)); --pw: calc(.168 * var(--U)); --ph: calc(.13 * var(--U)); --z: 16; }
+.ring0 { --R: calc(.20 * var(--U));  --pw: calc(.17 * var(--U)); --ph: calc(.138 * var(--U)); --z: 20; }
+.ring1 { --R: calc(.335 * var(--U)); --pw: calc(.17 * var(--U)); --ph: calc(.138 * var(--U)); --z: 16; }
 
 /* central seed pod (the heart of the flower) */
 .lotus-center {
   position: absolute;
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: calc(.138 * var(--U));
-  height: calc(.138 * var(--U));
+  width: calc(.125 * var(--U));
+  height: calc(.125 * var(--U));
   border-radius: 50%;
   background: var(--card);
   color: var(--card-text);
@@ -395,9 +395,9 @@ a:visited { color: var(--text); }
   cursor: pointer;
   font: inherit;
 }
-.lotus-center .lc-course { font-size: calc(.0112 * var(--U)); letter-spacing: .08em; text-transform: uppercase; font-weight: 800; }
-.lotus-center .lc-title { font-family: var(--font-serif); font-size: calc(.017 * var(--U)); line-height: 1.0; margin: calc(.004 * var(--U)) 0; }
-.lotus-center .lc-hint { font-size: calc(.0105 * var(--U)); color: var(--card-soft); }
+.lotus-center .lc-course { font-size: calc(.0105 * var(--U)); letter-spacing: .06em; text-transform: uppercase; font-weight: 800; }
+.lotus-center .lc-title { font-family: var(--font-serif); font-size: calc(.0155 * var(--U)); line-height: 1.0; margin: calc(.0035 * var(--U)) 0; }
+.lotus-center .lc-hint { font-size: calc(.0098 * var(--U)); color: var(--card-soft); }
 .lotus-center:hover { filter: contrast(1.08); }
 
 /* petals — upright, readable cards positioned on their ring. Folded to the
@@ -414,7 +414,7 @@ a:visited { color: var(--text); }
   justify-content: center;
   gap: .15em;
   padding: calc(.011 * var(--U));
-  font-size: calc(.0152 * var(--U));
+  font-size: calc(.0178 * var(--U));
   text-align: center;
   text-decoration: none;
   background: var(--card);
@@ -435,7 +435,7 @@ a:visited { color: var(--text); }
   width: 1.7em; height: 1.7em; display: grid; place-items: center;
   border-radius: 50%; background: var(--card-chip-bg); color: var(--card-chip-text);
 }
-.petal .p-title { font-weight: 700; font-size: 1em; line-height: 1.12; }
+.petal .p-title { font-weight: 800; font-size: 1em; line-height: 1.14; letter-spacing: .005em; }
 
 /* bloomed state — the ring's layer is open; petals settle on their ring */
 .ring.open .petal {
