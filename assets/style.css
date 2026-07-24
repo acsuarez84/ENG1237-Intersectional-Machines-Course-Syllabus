@@ -359,13 +359,16 @@ a:visited { color: var(--text); }
 /* --U is the flower's diameter; every radius, size and font scales from it,
    so the whole lotus stays proportional with no media queries. */
 .lotus-fit {
-  --U: min(900px, 94vw);
+  --U: min(1120px, calc(100vw - 3rem));
   position: relative;
   width: var(--U);
   aspect-ratio: 1 / 1;
   margin: 0 auto;
   overflow: hidden;
 }
+/* home page = just the big flower, centred */
+.home-flower { display: grid; place-items: center; min-height: 78vh; }
+.home-flower .lotus-stage { margin: 0 auto; }
 .lotus { position: absolute; inset: 0; perspective: 900px; transform-style: preserve-3d; }
 
 /* Each ring sits at radius --R with petals of size --pw x --ph. Rings are
@@ -380,8 +383,8 @@ a:visited { color: var(--text); }
   position: absolute;
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: calc(.125 * var(--U));
-  height: calc(.125 * var(--U));
+  width: calc(.112 * var(--U));
+  height: calc(.112 * var(--U));
   border-radius: 50%;
   background: var(--card);
   color: var(--card-text);
