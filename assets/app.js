@@ -85,16 +85,20 @@
     var current = null;
 
     function place(pad) {
-      // Anchor the bubble to the leaf's tip, then clamp inside the viewport.
-      var lr = pad.getBoundingClientRect();
+      // Anchor the bubble right beside the clicked term, then clamp on-screen.
+      var term = pad.querySelector(".pad-label-in") || pad;
+      var lr = term.getBoundingClientRect();
       var br = bubble.getBoundingClientRect();
       var vw = document.documentElement.clientWidth;
       var vh = document.documentElement.clientHeight;
-      var cx = lr.left + lr.width / 2;
-      var left = cx - br.width / 2;
-      var top = (lr.top + lr.height / 2 < vh / 2) ? lr.bottom + 12 : lr.top - br.height - 12;
-      left = Math.max(10, Math.min(left, vw - br.width - 10));
-      top = Math.max(76, Math.min(top, vh - br.height - 10));
+      var gap = 8;
+      // put it on whichever side of the term has room
+      var left = (lr.left + lr.width / 2 > vw / 2) ? lr.left - br.width - gap : lr.right + gap;
+      if (left < 8) left = lr.right + gap;
+      if (left + br.width > vw - 8) left = lr.left - br.width - gap;
+      var top = lr.top + lr.height / 2 - br.height / 2;   // vertically centered on the term
+      left = Math.max(8, Math.min(left, vw - br.width - 8));
+      top = Math.max(76, Math.min(top, vh - br.height - 8));
       bubble.style.left = left + "px";
       bubble.style.top = top + "px";
     }
