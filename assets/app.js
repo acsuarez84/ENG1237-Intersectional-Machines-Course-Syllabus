@@ -72,57 +72,69 @@
     setupConcepts();
   });
 
-  /* ---------------- Pond concepts (home page) ----------------
-     Each leaf around the flower reveals a short prelude of the theories and
-     authors behind that concept.                                            */
+  /* ---------------- Concept leaves (home page) ----------------
+     Each leaf around the flower pops a bubble with a short prelude of the
+     theories and authors behind that concept.                               */
   function setupConcepts() {
     var pads = document.querySelectorAll(".pad[data-concept]");
     if (!pads.length) return;
-    var hint = document.getElementById("prelude-hint");
+    var bubble = document.getElementById("concept-bubble");
+    var body = document.getElementById("bubble-body");
+    var closeBtn = document.getElementById("bubble-close");
+    if (!bubble || !body) return;
+    var current = null;
 
-    function anyOpen() { return document.querySelector(".prelude-panel:not([hidden])"); }
-
-    function closeAll(exceptId) {
-      document.querySelectorAll(".prelude-panel").forEach(function (p) {
-        if (p.id !== exceptId) p.hidden = true;
-      });
-      pads.forEach(function (b) {
-        if (b.getAttribute("data-concept") !== exceptId) b.setAttribute("aria-expanded", "false");
-      });
+    function place(pad) {
+      // Anchor the bubble to the leaf's tip, then clamp inside the viewport.
+      var lr = pad.getBoundingClientRect();
+      var br = bubble.getBoundingClientRect();
+      var vw = document.documentElement.clientWidth;
+      var vh = document.documentElement.clientHeight;
+      var cx = lr.left + lr.width / 2;
+      var left = cx - br.width / 2;
+      var top = (lr.top + lr.height / 2 < vh / 2) ? lr.bottom + 12 : lr.top - br.height - 12;
+      left = Math.max(10, Math.min(left, vw - br.width - 10));
+      top = Math.max(76, Math.min(top, vh - br.height - 10));
+      bubble.style.left = left + "px";
+      bubble.style.top = top + "px";
     }
 
-    pads.forEach(function (b) {
-      b.addEventListener("click", function () {
-        var id = b.getAttribute("data-concept");
-        var panel = document.getElementById(id);
-        if (!panel) return;
-        var opening = panel.hidden;
-        closeAll(opening ? id : null);
-        panel.hidden = !opening;
-        b.setAttribute("aria-expanded", String(opening));
-        if (hint) hint.style.display = opening ? "none" : "";
-        if (opening) {
-          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          var h = panel.querySelector("h3");
-          if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
-        }
+    function open(pad) {
+      var id = pad.getAttribute("data-concept");
+      var src = document.getElementById("src-" + id);
+      if (!src) return;
+      if (current) current.setAttribute("aria-expanded", "false");
+      body.innerHTML = src.innerHTML;
+      bubble.hidden = false;
+      // measure once shown, then position
+      bubble.style.left = "-9999px"; bubble.style.top = "0";
+      place(pad);
+      pad.setAttribute("aria-expanded", "true");
+      current = pad;
+      var h = bubble.querySelector("h3");
+      if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+    }
+
+    function close() {
+      bubble.hidden = true;
+      if (current) { current.setAttribute("aria-expanded", "false"); current.focus(); current = null; }
+    }
+
+    pads.forEach(function (pad) {
+      pad.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (current === pad) { close(); } else { open(pad); }
       });
     });
 
-    document.querySelectorAll(".prelude-close").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var id = btn.getAttribute("data-close");
-        var panel = document.getElementById(id);
-        if (panel) panel.hidden = true;
-        var b = document.querySelector('.pad[data-concept="' + id + '"]');
-        if (b) { b.setAttribute("aria-expanded", "false"); b.focus(); }
-        if (hint && !anyOpen()) hint.style.display = "";
-      });
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    document.addEventListener("click", function (e) {
+      if (!bubble.hidden && !bubble.contains(e.target) && !e.target.closest(".pad")) close();
     });
-
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && anyOpen()) { closeAll(null); if (hint) hint.style.display = ""; }
+      if (e.key === "Escape" && !bubble.hidden) close();
     });
+    window.addEventListener("resize", function () { if (current) place(current); });
   }
 
   /* ---------------- Petal drill-down (sections 4, 5, 9) ---------------- */
